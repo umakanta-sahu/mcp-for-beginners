@@ -1,6 +1,7 @@
 # Ambient Clinical Documentation for Frontline Workers — India & Europe Plan
 
 > Status: **planning only, nothing built yet.** Research snapshot as of September 2026.
+> Next: [Personas, pain points & PoC PRD](./PRD-personas-poc.md)
 > Figures marked *(est.)* are our own bottom-up estimates; everything else is cited under [Sources](#sources).
 
 ---

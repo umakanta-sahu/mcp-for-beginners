@@ -1,7 +1,7 @@
 # Personas, Pain Points & Proof-of-Concept PRD
 
 > Companion to [README.md](./README.md) (market & GTM plan).
-> Status: **Draft v0.1 for review. Nothing built yet.** Pain-point scores are hypotheses to confirm in discovery (Phase 0 shadowing).
+> Status: **Draft v0.2 for review. Nothing built yet.** v0.2 brings **hospital OPD consultations** and the **medication loop (prescription → pharmacy → patient)** into scope; see §A.5. Pain-point scores are hypotheses to confirm in discovery (Phase 0 shadowing).
 > Context: India first, private hospitals with 100–500 beds, inpatient (IPD) wards.
 
 ---
@@ -23,6 +23,7 @@
 | P9 | **CIO / IT head** | Gatekeeper | Integration, security, devices | Can veto |
 | P10 | **CEO / CFO / owner** | Economic buyer | ROI dashboard | Signs |
 | P11 | **Insurance / TPA desk & billing** | Downstream user | Needs complete discharge docs for claims | ROI evidence |
+| P12 | **Pharmacist** (hospital pharmacy in India; community pharmacy in Europe) | Downstream user | Receives structured prescriptions; dispenses; flags queries | Makes the medication loop work |
 
 ---
 
@@ -71,6 +72,9 @@
 | D1 | Summaries and notes drafted by residents are inconsistent and need rework | Medium |
 | D2 | Round instructions not captured and executed accurately | High |
 | D3 | Suspicion of AI and fear of liability for AI text | Adoption risk |
+| D4 | **High-volume OPD** (often 40–100 patients/day in Indian hospitals): little time per patient, typing or handwriting while talking, eye contact lost | Critical |
+| D5 | Writing prescriptions by hand or in a slow HIS screen; illegible or incomplete prescriptions come back as pharmacy queries | High |
+| D6 | Follow-up patients arrive without their earlier notes; OPD history and IPD stay live in different places | High |
 
 #### P5 / P6 — Patient and attendant ("Mr. Sharma" and his daughter)
 | ID | Pain point | Severity |
@@ -80,6 +84,8 @@
 | PT3 | Doesn't know what was recorded about them or who sees it; worried about recordings | High (trust) |
 | PT4 | Long wait on discharge day for "the file" | High |
 | PT5 | Attendant (not the patient) makes decisions but isn't formally in the loop | Medium |
+| PT6 | **Medicine confusion**: can't read the prescription, isn't sure of timing, brand substitutions at the pharmacy, runs out and doesn't refill | Critical (adherence/readmissions) |
+| PT7 | Walks between OPD, pharmacy and billing; pharmacy stock-outs discovered only at the counter | High |
 
 #### P7 — Nursing superintendent / CNO
 | ID | Pain point | Severity |
@@ -106,6 +112,14 @@
 #### P11 — TPA / billing desk
 - B1 Claims queried or denied for incomplete discharge documentation; cash-flow delays.
 
+#### P12 — Pharmacist
+| ID | Pain point | Severity |
+|---|---|---|
+| PH1 | Illegible or incomplete prescriptions (missing strength, frequency, duration) mean calling the doctor, and patients wait | High |
+| PH2 | Discharge medicines requested at the last minute, which delays discharge | High |
+| PH3 | No view of the patient's other medicines, so duplicates and interactions are caught late or not at all | High (safety) |
+| PH4 | *Europe:* e-prescription handled through national systems; free-text or badly coded prescriptions still cause queries | Medium |
+
 ---
 
 ### A.3 Prioritisation: what to fix first
@@ -131,11 +145,13 @@
 | R3 Round instructions → orders | 4 | 3 | 3 | 4 | 1 | 1 | 16 |
 | PT2 Portable records (ABHA) | 4 | 4 | 2 | 2 | 4 | 2 | 18 |
 | B1 Claims completeness | 4 | 3 | 2 | 5 | 4 | 3 | 21 |
-| OPD consultation notes | 3 | 5 | 4 | 3 | 3 | 3 | 21 (crowded market) |
+| OPD consultation note + prescription draft (hospital OPD, D4–D6) | 4 | 5 | 5 | 4 | 3 | 4 | **25** → *promoted in v0.2* |
+| Medication loop: structured Rx → pharmacy → patient schedule (PT6, PH1–PH2) | 5 | 4 | 4 | 4 | 3 | 3 | **23** → *promoted in v0.2* |
+| OPD in standalone clinics (not hospital) | 3 | 5 | 4 | 3 | 3 | 3 | 21 (crowded: Eka, HealthPlix; different GTM) |
 
 ### A.4 Critical set for the proof of concept
 
-**Fix these four, with consent as the foundation:**
+**Fix these six, with consent as the foundation:**
 
 | # | Critical problem | Personas | Why it's in the PoC |
 |---|---|---|---|
@@ -143,9 +159,11 @@
 | **2** | **Auto-generated SBAR shift handover** (N3, C2) | P1, P2, P7, P8 | Built from data we already capture in #1; high safety value; no integration needed; visible to every nurse twice a day, which drives habit |
 | **3** | **Discharge summary draft** (R1, R4, PT4) | P3, P4, P8, P10, P11 | Hardest ROI for the CFO (discharge TAT, bed turnover, claim queries); brings doctors onto the same patient timeline |
 | **4** | **Patient-friendly discharge instructions** in the patient's language (PT1, PT3) | P5, P6 | The differentiator and the trust story; low build cost once #3 exists |
+| **5** | **OPD consultation note + prescription draft** in the same hospitals (D4–D6) | P4, P3, P5 | Reuses ~70% of the engine; consultants spend most of their day in OPD, so this wins the doctors; gives one patient timeline from OPD → admission → discharge → follow-up OPD |
+| **6** | **Medication loop**: structured prescription → hospital pharmacy → patient medicine schedule and reminders (PT6, PH1–PH2) | P12, P5, P6, P3 | Closes the loop the patient actually experiences; cuts pharmacy queries and discharge delays; in Europe it is the path into national e-prescription (EHDS priority data from March 2029) |
 | **Foundation** | **Consent + clinician-approval + audit** (PT3, D3, I2) | All | Non-negotiable for DPDP and for trust; also a sales asset |
 
-**Explicitly deferred (not in PoC):** HIS write-back for all hospitals (1 adapter only, see §B.9), orders/CPOE, ICU device feeds, OPD scribe, clinical decision support, coding/billing, full ABHA M3 fetch, iOS, hardware.
+**Explicitly deferred (not in PoC):** HIS write-back for all hospitals (1 adapter only, see §B.9), inpatient orders/CPOE, ICU device feeds, standalone-clinic OPD go-to-market, clinical decision support (including automated drug-interaction alerts), external retail-pharmacy network in India, live national e-prescription in Europe (designed for, built in the Europe phase), coding/billing, full ABHA M3 fetch, iOS, hardware.
 
 **PoC hypotheses**
 - **H1:** Nurses using voice-to-chart save **≥30 minutes per 8-hour shift** (≥45 for 12-hour) of documentation time versus baseline.
@@ -154,7 +172,53 @@
 - **H4:** Discharge summary drafting time drops from ~30 to **≤10 minutes**, and discharge-order-to-exit TAT improves by **≥20%**.
 - **H5:** **≥80%** of patients/attendants correctly answer 3 teach-back questions (meds, red flags, follow-up) using the multilingual summary, versus baseline.
 - **H6:** **≥70%** of eligible nurses on pilot wards are weekly active by week 6. This is the adoption hypothesis and the most likely to fail.
+- **H7 (OPD):** Consultants using the OPD module finish the note and prescription **before the patient leaves the room in ≥80% of visits**, with ≥90% of drafts accepted with minor or no edits, and no increase in consultation length.
+- **H8 (medication loop):** Pharmacy queries on prescriptions drop by **≥50%**; discharge medicines are ready **before** the discharge summary is signed in ≥70% of discharges; ≥60% of patients who opt in still use the medicine schedule at day 14.
 - **Kill / pivot signals:** adoption below 40% at week 6 despite fixes; critical error rate we can't bring to zero with guardrails; time saved under 15 min/shift.
+
+### A.5 Why OPD and medication were deferred in v0.1, and why v0.2 brings them in
+
+**Can the solution just be extended to OPD? Mostly yes.** Capture, speech recognition, grounding, review and approve, consent, audit, patient summary and the FHIR model are shared. The work that is genuinely new:
+
+| Area | Inpatient (IPD) nursing | OPD consultation | Extra work |
+|---|---|---|---|
+| Capture | Nurse dictates *after* care (push-to-talk) | **Ambient**: doctor–patient conversation, 2–4 speakers | Speaker separation, conversational (not dictation) extraction, more noise |
+| Consent | Once at admission | **Every visit**, often in a crowded room | Fast per-visit consent at registration + verbal confirmation |
+| Output | Structured chart fields | Note (history, exam, assessment, plan) + **prescription** | New templates per specialty |
+| Safety | Records what was done | Prescription drives what *will* be done | Higher bar: drug/strength/frequency/duration all confirmed by the doctor |
+| Buyer and metric | CNO; nurse time | Medical director; OPD throughput, doctor time | Separate ROI story |
+
+**Why it was deferred:** focus and proof, not technology. The concerns were (a) the standalone outpatient scribe is the most crowded and commoditised space (Eka, HealthPlix, Doctolib bundling it for free), (b) ambient conversation plus prescriptions is a bigger safety and regulatory step, and (c) a PoC testing too many hypotheses at once is harder to read.
+
+**Why bring it in now:** in **hospital** OPD (not standalone clinics) it strengthens the core thesis rather than diluting it:
+1. **One patient timeline.** OPD visit → admission → nursing chart → discharge → follow-up OPD is the continuity story that competitors doing doctor-only *or* nurse-only can't tell.
+2. **Doctor adoption.** Consultants spend most of their day in OPD. Winning them there makes them champions for the discharge and ward modules.
+3. **The hospital buys once.** Same contract, same integration, same consent framework.
+
+**Guardrails so it doesn't dilute the PoC:** hospital OPD of the **same 2 pilot departments** only; no standalone-clinic sales motion until after the pilot; prescriptions are **drafts** that the doctor confirms line by line; no drug suggestions or auto-dosing.
+
+**Medication loop as part of the end-to-end product, not an add-on.** Agreed. What the patient experiences is "did I get the right medicine and do I know how to take it", not "was the note written". So the product is designed around a closed loop:
+
+```
+Doctor speaks (OPD / round / discharge)
+  → structured prescription draft (drug, strength, form, dose, route, frequency, duration, instructions)
+  → doctor confirms each line
+  → hospital pharmacy queue (India)  |  national e-prescription via the certified EHR/PVS (Europe)
+  → dispensing recorded (what was actually given, incl. substitutions)
+  → patient medicine schedule in their language + reminders + refill prompt
+  → adherence and side-effect check-in visible at the next visit
+```
+
+**How it differs by market:**
+
+| | India (PoC) | Europe (design now, build in Europe phase) |
+|---|---|---|
+| Where prescriptions go | Hospital's in-house pharmacy (OPD counter, IPD indent, discharge meds). No national e-prescription mandate for retail pharmacies yet | National e-prescription systems. **Germany:** the E-Rezept is created in the practice or hospital software, sent over the Telematikinfrastruktur (gematik) and redeemed at pharmacies. **EHDS:** ePrescription/eDispensation are priority categories and must be exchangeable across all member states via MyHealth@EU from **March 2029** |
+| Our role | Deliver structured prescriptions to the hospital pharmacy (HIS pharmacy module or our own pharmacy queue screen); record dispensing; patient schedule | **Draft** the structured prescription and hand it to the certified EHR/PVS/KIS, which signs and issues it. Becoming a certified e-prescription issuer ourselves is a separate, later decision |
+| Standards | FHIR R4 MedicationRequest / MedicationDispense; ABDM PrescriptionRecord to the patient's ABHA (Could) | HL7 Europe Medication Prescription & Dispense IG; national profiles (e.g. gematik FHIR profiles) |
+| Retail pharmacy | Later: share via ABHA or a QR on the patient summary so any pharmacy can read it; partnerships with pharmacy chains after the pilot | Handled by the national system; the patient redeems with their health card or app |
+
+**Regulatory line to hold:** turning the doctor's own words into a structured prescription for the doctor to confirm is documentation. **Suggesting** drugs or doses, or automated interaction and allergy alerts, is clinical decision support and very likely moves the product into medical-device territory (CDSCO; EU MDR class IIa or higher). For the PoC: show the patient's allergies and current medicines *as information* next to the draft; formal interaction checking only via a licensed drug database and after a regulatory opinion.
 
 ---
 
@@ -163,21 +227,21 @@
 ### B.1 Overview
 | Item | Detail |
 |---|---|
-| Product | WardVoice PoC: voice-to-chart for nurses, SBAR handover, discharge summary draft, patient summary, with a consent and approval layer |
+| Product | WardVoice PoC (name under review now that OPD is in scope): voice-to-chart for nurses, SBAR handover, OPD note + prescription draft, discharge summary draft, medication loop (pharmacy + patient schedule), patient summary, with a consent and approval layer |
 | Owner | Founder / PM (TBD) |
 | Clinical lead | Nurse leader + doctor advisor (TBD) |
-| Pilot | 2–3 design-partner hospitals × 2 wards each (1 medical, 1 surgical); ~60–120 nurses, ~15 residents |
-| Duration | Build 12–16 weeks; pilot 10 weeks (2 baseline + 8 live) |
-| Platforms | Android app (nurses and doctors), web console (in-charge, admin, doctor desktop), patient web link (no app install) |
+| Pilot | 2–3 design-partner hospitals × 2 wards each (1 medical, 1 surgical) + the **OPD of the same 2 departments** + the **hospital pharmacy**; ~60–120 nurses, ~15 residents, ~8–12 consultants, pharmacy staff |
+| Duration | Build 18–20 weeks; pilot 12 weeks (2 baseline + 10 live) |
+| Platforms | Android app (nurses and doctors), web console (in-charge, admin, doctor OPD desktop, pharmacy queue), patient web link (no app install) |
 
 ### B.2 Goals and non-goals
 **Goals**
-1. Prove H1–H6 with credible, pre-registered measurement (time-motion + system logs).
+1. Prove H1–H8 with credible, pre-registered measurement (time-motion + system logs).
 2. Show zero-harm operation with human approval on every entry.
 3. Produce a case study and a referenceable ROI for paid conversion.
 
 **Non-goals (PoC)**
-- Replacing the HIS; placing orders; diagnostic or treatment suggestions; billing codes; multi-hospital analytics; iOS; hardware; EU compliance (design for it, don't certify).
+- Replacing the HIS or pharmacy system; inpatient order entry; diagnostic, drug or dose suggestions; automated interaction alerts; issuing legally signed e-prescriptions outside a certified system; billing codes; multi-hospital analytics; iOS; hardware; EU compliance (design for it, don't certify).
 
 ### B.3 Success metrics
 | Metric | Baseline method | Target |
@@ -194,6 +258,13 @@
 | Weekly active nurses / eligible | System | ≥70% by week 6 |
 | Nurse satisfaction (NASA-TLX workload, NPS) | Pre/post survey | Workload −20%; NPS ≥ +30 |
 | Consent opt-out rate | System | Tracked (expect <10%) |
+| OPD note + prescription done before patient leaves | System timestamps vs. visit end | ≥80% of visits |
+| OPD consultation length | Time-motion / queue system | No increase (target −10%) |
+| OPD draft acceptance (minor/no edit) | System log | ≥90% |
+| Prescription completeness (strength, frequency, duration, instructions) | Pharmacy audit | ≥98% |
+| Pharmacy queries per 100 prescriptions | Pharmacy log | −50% |
+| Discharge meds ready before summary sign-off | Pharmacy + system timestamps | ≥70% |
+| Patient medicine schedule use at day 14 (opt-in) | System | ≥60% |
 
 ### B.4 Scope summary (MoSCoW)
 | Capability | Priority |
@@ -213,7 +284,16 @@
 | Ambient (always-listening) bedside mode | **Could** (behind a flag, 1 ward) |
 | Progress note from ward-round dictation | **Could** |
 | ABHA link / push discharge summary to ABHA | **Could** |
-| Orders, CDS, coding, OPD, iOS, hardware | **Won't (PoC)** |
+| OPD ambient capture → consultation note (2 pilot departments) | **Must** |
+| Structured prescription draft with line-by-line doctor confirmation (OPD + discharge) | **Must** |
+| Hospital pharmacy queue: receive Rx, mark dispensed/substituted, discharge-meds readiness | **Must** |
+| Patient medicine schedule in local language + reminders (SMS/WhatsApp) | **Must** |
+| Refill prompt and day-7/14 adherence check-in | **Should** |
+| Push prescription to HIS pharmacy module (instead of our queue) | **Should** |
+| Prescription to ABHA / QR for any pharmacy | **Could** |
+| Allergy and current-meds display next to the prescription draft (information only) | **Must** |
+| Automated interaction/allergy alerts (licensed drug DB) | **Won't (PoC)**; needs regulatory opinion |
+| Inpatient orders/CPOE, CDS, coding, standalone-clinic OPD, retail pharmacy network, EU e-prescription, iOS, hardware | **Won't (PoC)** |
 
 ---
 
@@ -243,6 +323,20 @@
 1. At admission the patient/attendant gets a consent explanation (spoken + written, in their language) and gives consent via tap/OTP or a recorded verbal statement.
 2. At discharge they receive an SMS/WhatsApp link (no app): a plain-language summary in the chosen language with meds table (name, dose, when, with/without food), red-flag symptoms, follow-up date, and a "read aloud" button.
 3. Options: download PDF; "Save to ABHA" (Could); view "what was recorded about me"; withdraw consent for future recording.
+
+**J5 — OPD consultation (ambient)**
+1. At registration the patient (or attendant) is asked for AI-documentation consent for the visit; returning patients' standing consent is shown and reconfirmed verbally.
+2. The doctor taps **Start visit** on phone or desktop (a visible recording indicator is shown to the patient) and consults normally in any supported language.
+3. On **End visit**, within ≤20 s the doctor sees: consultation note (complaints, history, exam, assessment in the doctor's words, plan), prescription lines, investigations requested, follow-up date. Prior OPD and IPD history of this patient is shown alongside.
+4. The doctor confirms each prescription line (drug, strength, dose, frequency, duration, instructions) and approves the note. It prints and/or goes to the HIS.
+5. The prescription appears in the pharmacy queue before the patient reaches the counter; the patient receives the medicine schedule link.
+
+**J6 — Medication loop**
+1. A prescription (from OPD, a ward round, or discharge) is approved by the doctor.
+2. The pharmacy screen shows it structured and legible; the pharmacist marks each line dispensed, substituted (with the brand given) or out of stock, or raises a query back to the doctor.
+3. For discharges, the pharmacy sees the planned discharge meds as soon as the discharge is decided, so medicines are packed before the summary is signed.
+4. The patient gets a schedule in their language: pictograms for morning/noon/night and before/after food, the actual brands dispensed, reminders, and a refill prompt before stock runs out.
+5. Day 7/14 check-in ("taking it? any side effects?") appears in the doctor's view at the next visit. Serious answers trigger the hospital's call-back process, not an AI response.
 
 ---
 
@@ -329,6 +423,30 @@
 | PAT-05 | "What was recorded about me" view + consent withdrawal | — |
 | PAT-06 | Save to ABHA / PHR app (Could) | ABDM sandbox |
 
+#### OPD consultation (OPD)
+| ID | Requirement | Acceptance criteria |
+|---|---|---|
+| OPD-01 | Per-visit consent at registration (tap/OTP/verbal), with standing consent for follow-ups that the patient can withdraw | Visit cannot start ambient capture without a green consent status |
+| OPD-02 | Ambient capture of a 2–4 speaker consultation up to 30 min, with a visible recording indicator and a pause button | Speaker labels (doctor / patient / attendant) ≥90% correct on test set |
+| OPD-03 | Generate a consultation note in the department's template; assessment/diagnosis only in the doctor's own words, never inferred | Enforced; red-team test set |
+| OPD-04 | Show the patient's prior OPD notes, IPD stays and discharge summaries from our system alongside the draft | Timeline loads ≤3 s |
+| OPD-05 | Specialty templates for the 2 pilot departments (e.g. general medicine, general surgery) | Signed off by department head |
+| OPD-06 | Output: printed note + prescription on letterhead; HIS upload (Should); FHIR Encounter + Composition | — |
+
+#### Prescription and medication loop (MED)
+| ID | Requirement | Acceptance criteria |
+|---|---|---|
+| MED-01 | Extract prescription lines from what the doctor says: drug (generic + brand), strength, form, dose, route, frequency, duration, instructions (food timing, taper) | ≥98% line-level accuracy on test set after doctor confirmation |
+| MED-02 | Drug must match the hospital formulary / drug master; unmatched names need a manual pick | Hard stop; no free-text drugs |
+| MED-03 | Doctor confirms **each line** (not "approve all") before the prescription is issued; missing mandatory fields block issue | Enforced server-side |
+| MED-04 | Show allergies and current medicines (from our record) next to the draft as information; no automated alerts in PoC | UI test |
+| MED-05 | Pharmacy queue (web): incoming prescriptions by patient/time/location (OPD, ward, discharge); per line dispensed / substituted (brand) / out of stock / query to doctor | Status visible to doctor and nurse ≤1 min |
+| MED-06 | Discharge-meds pre-alert: when a discharge is planned, the pharmacy sees draft discharge meds; final list reconciled at sign-off | Differences highlighted to pharmacist |
+| MED-07 | Patient medicine schedule from **dispensed** items (not just prescribed): language, pictograms, times, reminders via SMS/WhatsApp, refill prompt | Patient opt-in; stop anytime |
+| MED-08 | Day 7/14 check-in: taking as prescribed? side effects? Responses shown at the next visit; red-flag answers route to a hospital-defined call-back list, never auto-advice | Configurable questions |
+| MED-09 | Standards: FHIR R4 MedicationRequest, MedicationDispense, MedicationStatement; mapping document to HL7 Europe MPD and gematik E-Rezept profiles for the Europe phase | Mapping reviewed |
+| MED-10 | Push prescription to the HIS pharmacy module via the partner adapter (Should); push to ABHA / show QR for any pharmacy (Could) | — |
+
 #### Dashboards and admin (ADM)
 | ID | Requirement | Acceptance criteria |
 |---|---|---|
@@ -366,6 +484,10 @@
 | Automation complacency (approve without reading) | Time pressure | Confidence highlighting; periodic "seeded error" checks in training mode; approval time monitoring | Track approvals under 2 s |
 | Patient summary misleads | Simplification drops nuance | Generated from approved summary only; clinician 1-tap review; red-flag section mandatory | Teach-back interviews |
 | Privacy breach from audio | Device loss, leakage | Encryption, auto-delete, MDM remote wipe | VAPT; incident drill |
+| Wrong drug/strength/frequency on a prescription | ASR error, sound-alike brands, misheard numbers | Formulary match; line-by-line confirmation (MED-03); mandatory fields; strength shown next to brand | 100% pharmacist review in pilot + audit of all queries |
+| Content attributed to the wrong speaker in OPD (patient's words recorded as doctor's findings) | Diarization error | Speaker labels visible; assessment only from doctor's speech; doctor approval | Weekly OPD note audit |
+| Patient follows prescribed, not dispensed, medicine | Substitution at pharmacy | Schedule built from dispensed items (MED-07) | Teach-back sample |
+| Check-in answer reports a serious side effect and no one acts | Unmonitored channel | Red flags routed to a staffed call-back list with SLA; patient told to call/visit for emergencies | Review of all red-flag responses |
 
 A **clinical safety officer** (a nurse or doctor from a design partner) signs off the hazard log before go-live.
 
@@ -374,8 +496,10 @@ A **clinical safety officer** (a nurse or doctor from a design partner) signs of
 ### B.9 Integration strategy for the PoC
 - **Primary path: standalone + paper-mode (CHT-02).** Value doesn't depend on HIS access; the pilot can start in weeks.
 - **Secondary: 1 HIS adapter** with the most cooperative design partner: read the ward census and patients; write vitals, notes and the discharge PDF.
-- **Standards:** internal model mapped to **FHIR R4** (Patient, Encounter, Observation, MedicationAdministration, Procedure, Condition, Composition, Consent, Provenance) so ABDM (NRCeS profiles) and EU (EHDS) paths reuse it.
-- **ABDM:** sandbox integration for ABHA linking and pushing the discharge summary (Could).
+- **Standards:** internal model mapped to **FHIR R4** (Patient, Encounter, Observation, MedicationAdministration, MedicationRequest, MedicationDispense, MedicationStatement, Procedure, Condition, Composition, Consent, Provenance) so ABDM (NRCeS profiles) and EU (EHDS) paths reuse it.
+- **ABDM:** sandbox integration for ABHA linking and pushing the discharge summary and prescriptions (Could).
+- **Pharmacy (India):** our pharmacy queue screen by default (works without integration); adapter to the HIS pharmacy module where the partner allows it.
+- **Europe (design only in PoC):** we draft structured prescriptions and hand them to the certified EHR/PVS/KIS, which issues the national e-prescription (e.g. Germany's E-Rezept via the Telematikinfrastruktur). The data model already follows the HL7 Europe Medication Prescription & Dispense profiles, so EHDS cross-border exchange (March 2029) needs mapping, not redesign.
 
 ### B.10 Data model (core entities)
 `Hospital → Ward → Bed → Encounter (admission) → Patient`
@@ -385,10 +509,13 @@ A **clinical safety officer** (a nurse or doctor from a design partner) signs of
 `DraftEntry → ApprovedEntry (immutable, version, approver, Provenance)`
 `Encounter → Handover[] (SBAR, author, acknowledger)`
 `Encounter → DischargeSummary (draft/approved, template, signatures) → PatientSummary (language, delivery log)`
+`Patient → Encounter (OPD visit | admission)`: one timeline across OPD and IPD
+`Encounter → Prescription (MedicationRequest[] lines, prescriber, status) → Dispense (MedicationDispense[]: dispensed/substituted/out-of-stock, pharmacist)`
+`Dispense → PatientMedSchedule (language, reminders, refill date) → CheckIn[] (adherence, side effects, red-flag routing)`
 `AuditEvent (actor, action, object, timestamp, device)`
 
 ### B.11 Analytics and instrumentation
-Events: `capture_started/finished`, `draft_generated (latency)`, `field_edited (type, before/after)`, `entry_approved (time_to_approve)`, `mismatch_blocked`, `handover_generated/approved/acknowledged`, `discharge_draft_generated/approved`, `patient_summary_sent/opened/read_aloud`, `consent_given/declined/withdrawn`, `offline_queue_depth`.
+Events: `capture_started/finished`, `draft_generated (latency)`, `field_edited (type, before/after)`, `entry_approved (time_to_approve)`, `mismatch_blocked`, `handover_generated/approved/acknowledged`, `discharge_draft_generated/approved`, `patient_summary_sent/opened/read_aloud`, `consent_given/declined/withdrawn`, `offline_queue_depth`, `opd_visit_started/ended`, `opd_draft_generated/approved`, `rx_line_confirmed/edited`, `rx_issued`, `rx_dispensed/substituted/out_of_stock/queried`, `med_schedule_opened`, `reminder_sent/acknowledged`, `checkin_completed/red_flag`.
 These feed the pilot report and the error taxonomy used to improve models.
 
 ### B.12 Pilot plan
@@ -398,8 +525,9 @@ These feed the pilot report and the error taxonomy used to improve models.
 | 1–2 | **Baseline**: time-motion study (trained observers, ~40 shift-hours per ward), handover omission audits, discharge TAT, patient teach-back baseline |
 | 3–4 | Go-live on ward A (medical) with daily huddles and fix-it sprints; 100% audit of med entries |
 | 5–6 | Go-live ward B (surgical); discharge summary module on; week-6 adoption checkpoint (H6) |
-| 7–10 | Steady state; audits drop to 10% sample if error rate holds at 0; repeat time-motion in week 9 |
-| 11 | Pilot report: H1–H6 results, ROI, case study; commercial proposal |
+| 6–7 | OPD go-live in the 2 pilot departments + pharmacy queue + patient medicine schedule; 100% pharmacist review of prescriptions |
+| 8–12 | Steady state; audits drop to 10% sample if error rate holds at 0; repeat time-motion (wards and OPD) in week 11 |
+| 13 | Pilot report: H1–H8 results, ROI, case study; commercial proposal |
 
 **Support model:** on-site implementation lead for the first 2 weeks per ward; WhatsApp support group with ≤15 min response in pilot hours.
 
@@ -412,12 +540,15 @@ These feed the pilot report and the error taxonomy used to improve models.
 | S4 | Paper-mode print formats, in-charge dashboard, remaining entry types |
 | S5 | SBAR handover, discharge draft + consultant approval |
 | S6 | Patient summary (languages, TTS, SMS/WhatsApp link), admin console, VAPT, hazard-log sign-off |
-| S7 (buffer) | HIS adapter (1 partner), regional language, hardening |
+| S7 | OPD: per-visit consent, ambient multi-speaker capture, consultation note templates, patient timeline |
+| S8 | Prescription extraction + line-by-line confirmation, pharmacy queue, discharge-meds pre-alert |
+| S9 | Patient medicine schedule, reminders, refill prompt, check-ins with red-flag routing; hazard-log update for OPD/medication |
+| S10 (buffer) | HIS adapter (1 partner, incl. pharmacy if allowed), regional language, hardening |
 
-In parallel: build the **evaluation set** (≥500 annotated nursing utterances, 100 discharge summaries), recorded with consent in design-partner wards during Phase 0.
+In parallel: build the **evaluation set** (≥500 annotated nursing utterances, 100 discharge summaries, 150 OPD consultations, 500 prescription lines), recorded with consent in design-partner wards during Phase 0.
 
 ### B.14 Dependencies and assumptions
-- Design partners provide: formulary list, chart and discharge templates, 2 wards, super-users, a safety officer, Wi-Fi access, and devices (or we supply ~1 phone per 2 nurses per shift).
+- Design partners provide: formulary / drug master, pharmacy team and workflow access, OPD rooms in 2 departments, chart and discharge templates, 2 wards, super-users, a safety officer, Wi-Fi access, and devices (or we supply ~1 phone per 2 nurses per shift).
 - A speech recognition vendor (e.g. Sarvam or equivalent) and LLM provider with India-region processing and no-training terms.
 - Regulatory opinion confirming the PoC scope (non-diagnostic documentation aid) is outside CDSCO medical-device licensing, or tells us what we need.
 
@@ -428,15 +559,18 @@ In parallel: build the **evaluation set** (≥500 annotated nursing utterances, 
 4. Which regional language per design partner?
 5. Is ambient (listening to the conversation) wanted by nurses, or is "tell it after" enough? voize suggests the latter.
 6. Will consultants accept approving AI-drafted discharge summaries on a phone?
-7. What price anchor does the CFO use: per bed, per nurse, or per discharge?
+7. What price anchor does the CFO use: per bed, per nurse, or per discharge? With OPD in scope, is per-OPD-consultation pricing an extra line?
+8. How does the partner hospital pharmacy work today (HIS module, separate pharmacy software, paper)? Who owns substitution decisions?
+9. Do OPD patients accept ambient recording in a crowded consultation room? What is the per-visit consent opt-out rate?
+10. Europe: which certified EHR/PVS vendor in the first country would take our structured prescription drafts, and on what terms?
 
 ### B.16 Out of scope (explicit)
-Orders/CPOE; clinical decision support or early-warning scores; ICU monitor/device integration; OPD scribe; coding and billing automation; multi-site analytics; iOS app; wearable or edge hardware; EU/UK deployment; research use of data.
+Inpatient orders/CPOE; clinical decision support or early-warning scores; drug/dose suggestions and automated interaction alerts; ICU monitor/device integration; standalone-clinic OPD go-to-market; retail pharmacy network (India); issuing national e-prescriptions (Europe); coding and billing automation; multi-site analytics; iOS app; wearable or edge hardware; EU/UK deployment; research use of data.
 
 ---
 
 ## Part C — What I need from you to finalise this PRD
-1. Agree the **critical four + consent foundation** as PoC scope (or swap one).
-2. Confirm a **working product name** (placeholder: WardVoice).
+1. Agree the **critical six + consent foundation** as PoC scope. v0.2 adds build time (~+6 weeks) and pilot complexity; the alternative is to phase OPD + medication in at pilot week 6, as the plan above already does.
+2. Confirm a **working product name**. "WardVoice" no longer fits now that OPD and pharmacy are in scope.
 3. Any **design-partner hospitals** you already have access to (city, beds, HIS vendor, paper vs digital charts), so templates, languages and integration can be pinned down.
 4. Pick **12-hour or 8-hour shift** hospitals first. This changes the time-saved targets.

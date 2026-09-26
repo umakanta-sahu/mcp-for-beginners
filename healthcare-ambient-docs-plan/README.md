@@ -139,7 +139,8 @@ Also from others: **Tandem** shows MDR IIa certification becomes a sales moat in
 |---|---|---|
 | Ward nurse | Record vitals, meds given, I/O, wound/fall-risk, nursing notes; hand over the shift | Charting done by end of shift with no memory backlog; ≥45 min saved per shift |
 | Resident / consultant | Ward-round notes, progress notes, orders drafted, discharge summary | Discharge summary draft in <2 min; round notes without typing |
-| OPD doctor (later / clinic app) | Consultation note + prescription | Note ready when patient leaves |
+| OPD doctor (hospital OPD in PoC; standalone clinic app later) | Consultation note + prescription | Note and prescription ready when patient leaves |
+| Pharmacist | Legible, structured prescriptions; discharge meds early | Fewer queries; no discharge delays |
 | Patient / family | Understand care; keep and share records | Plain-language summary in own language; linked to ABHA |
 | Nursing superintendent / CNO | Compliance, handover quality, staffing | NABH audit-ready documentation completeness |
 | CIO / CMIO | Safe integration, security | Clean HIS integration, audit logs, data residency |
@@ -163,6 +164,9 @@ Also from others: **Tandem** shows MDR IIa certification becomes a sales moat in
 
 **Patient summary**
 - Discharge and visit summary in plain language, available in English plus 5 Indic languages at launch, sent via SMS/WhatsApp link and pushed to the patient's ABHA locker.
+
+**Medication loop (core, see [PRD §A.5](./PRD-personas-poc.md#a5-why-opd-and-medication-were-deferred-in-v01-and-why-v02-brings-them-in))**
+- Spoken prescription → structured draft the doctor confirms line by line → hospital pharmacy queue (India) or certified EHR for the national e-prescription (Europe; EHDS ePrescription exchange from March 2029) → dispensing recorded → patient medicine schedule, reminders, refill prompt and check-ins.
 
 **Integrations**
 - 2 HIS partners via API/HL7v2/FHIR adapters; a CSV/print fallback for hospitals without an API.
